@@ -21,8 +21,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
-        Blade::directive('datetime', function($harga) {
-            return "<?php echo ($tanggal)->format('m/d/Y H:i'); ?>";
-        });
     }
 }
