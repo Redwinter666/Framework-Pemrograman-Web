@@ -41,3 +41,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('users', UserController::class);
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('report.sales');
 });
+
+Route::get('/index', function(){
+    $posts = [
+        (object)['title'=> 'belajar blade pro', 'published' => true],
+        (object)['title'=> 'tidak belajar blade pro', 'unpublished' => false],
+        (object)['title'=> 'tolong belajar blade pro', 'post_published' => true],
+        (object)['created_at'=> 241016728]
+    ];
+    return view('posts.index', compact('posts'));
+});
