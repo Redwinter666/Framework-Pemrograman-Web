@@ -55,3 +55,7 @@ Route::get('/index', function(){
     ];
     return view('posts.index', compact('posts'));
 });
+
+Route::get('/pos/history', function () {
+    return "Ini halaman riwayat transaksi khusus kasir";
+})->name('pos.history');
