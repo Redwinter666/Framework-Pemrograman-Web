@@ -27,7 +27,12 @@ class DatabaseSeeder extends Seeder
         'role' => 'kasir',
     ]);
 
-    $this->call(CategorySeeder::class);
+    $this->call([
+        CategorySeeder::class,
+        ProductsSeeder::class
+
+        ]);
+
 }
 
 
