@@ -11,6 +11,12 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <x-card>
+                <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus produk {{ $product->name }}?')" class="inline">
+    @csrf
+    @method('DELETE')
+    <button type="submit" class="text-red-600">Hapus</button>
+</form>
+
                 @if (session('success'))
                     <div class="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm">
                         {{ session('success') }}
@@ -68,8 +74,3 @@
 </x-app-layout>
 
 
-<form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus produk {{ $product->name }}?')" class="inline">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="text-red-600">Hapus</button>
-</form>

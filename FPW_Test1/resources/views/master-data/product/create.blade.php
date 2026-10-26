@@ -1,4 +1,17 @@
-<form action="{{ route('products.store') }}" method="POST" class="space-y-4">
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800">Data Produk</h2>
+            <a href="{{ route('products.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm">
+                + Tambah Produk
+            </a>
+        </div>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <x-card>
+              <form action="{{ route('products.store') }}" method="POST" class="space-y-4">
     @csrf
     <div>
         <label class="block text-sm font-medium text-gray-700">Kategori</label>
@@ -37,4 +50,11 @@
     </div>
     <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Simpan Produk</button>
 </form>
+
+
+            </x-card>
+        </div>
+    </div>
+</x-app-layout>
+
 
