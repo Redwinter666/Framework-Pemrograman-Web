@@ -2,42 +2,57 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
+use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
+
 
 class ProductController extends Controller
 {
-    public function index()
-    {
-        return "Ini halaman utama Data Produk (Hanya bisa diakses Admin)";
-    }
+public function index()
+{
+    $products = Product::with('Category')->latest()->paginate(10);
 
-    public function create()
-    {
-        return "Ini halaman form tambah Produk";
-    }
+    return view('master-data.product.index', compact('products'));
+}
 
-    public function store(Request $request)
-    {
-        // Logika simpan data produk
-    }
+public function create()
+{
+    $categories = Category::orderBy('name')->get();
+    return view('master-data.product.create', compact('categories'));
+}
+
+public function store(StoreProductRequest $request)
+{
+    product::create($request->validated());
+
+    return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
+}
+
 
     public function show(string $id)
     {
         return "Ini halaman detail Produk dengan ID: " . $id;
     }
 
-    public function edit(string $id)
-    {
-        return "Ini halaman form edit Produk dengan ID: " . $id;
-    }
+ public function edit(Product $product)
+{
+    $categories = Category::orderBy('name')->get();
+    return view('master-data.product.edit', compact('product', 'categories'));
+}
 
-    public function update(Request $request, string $id)
-    {
-        // Logika update data produk
-    }
+public function update(UpdateProductRequest $request, Product $product)
+{
+    $product->update($request->validated());
 
-    public function destroy(string $id)
-    {
-        // Logika hapus data produk
-    }
+    return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
+}
+public function destroy(Product $product)
+{
+    $product->delete();
+
+    return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+}
 }

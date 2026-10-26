@@ -59,3 +59,13 @@ Route::get('/index', function(){
 Route::get('/pos/history', function () {
     return "Ini halaman riwayat transaksi khusus kasir";
 })->name('pos.history');
+
+Route::resource('categories', CategoryController::class);
+
+Route::prefix('v1')->group(function () {
+    Route::apiResource('posts', PosController::class);
+});
+
+Route::prefix('v2')->group(function () {
+    Route::apiResource('posts', PosController::class);
+});
