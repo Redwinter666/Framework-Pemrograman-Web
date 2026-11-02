@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
-class product extends Model
+class Product extends Model
 {
     protected $fillable = [
         'category_id',
@@ -15,12 +15,21 @@ class product extends Model
         'price',
         'stock'
     ];
-    //
 
-    protected function priceRupiah(): Attribute
-{
-    return Attribute::make(
-        get: fn () => 'Rp ' . number_format($this->price, 0, ',', '.'),
-    );
-}
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function transactionDetails()
+    {
+        return $this->hasMany(TransactionDetail::class);
+    }
+
+    protected function formattedPrice(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => 'Rp ' . number_format($this->price, 0, ',', '.')
+        );
+    }
 }
