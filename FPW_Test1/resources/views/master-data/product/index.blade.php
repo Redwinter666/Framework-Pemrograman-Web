@@ -11,14 +11,36 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <x-card>
-
-
-
                 @if (session('success'))
-                <div class="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm">
-                    {{ session('success') }}
-                </div>
+                    <div class="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm">
+                        {{ session('success') }}
+                    </div>
                 @endif
+
+                @if (session('error'))
+                    <div class="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                {{-- Pertemuan 10: pencarian dan filter kategori --}}
+                <form method="GET" action="{{ route('products.index') }}" class="flex flex-wrap gap-3 mb-4">
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Cari nama atau kode produk..."
+                        class="flex-1 min-w-[220px] rounded-md border-gray-300 shadow-sm">
+
+                    <select name="category_id" class="rounded-md border-gray-300">
+                        <option value="">Semua Kategori</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Cari</button>
+                    <a href="{{ route('products.index') }}" class="px-4 py-2 text-gray-500">Reset</a>
+                </form>
 
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
@@ -33,47 +55,58 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @forelse ($products as $product)
-                        <tr class="@if ($product->stock == 0) bg-red-50 @elseif ($product->stock < 10) bg-yellow-50 @endif">
-                            <td class="px-4 py-2 text-sm">{{ $product->code }}</td>
-                            <td class="px-4 py-2 text-sm">{{ $product->name }}</td>
-                            <td class="px-4 py-2 text-sm">{{ $product->category->name }}</td>
-                            <td class="px-4 py-2 text-sm text-right">
-                                Rp{{ number_format($product->price, 0, ',', '.') }}
-                            </td>
-                            <td class="px-4 py-2 text-sm text-center font-semibold">
-                                {{ $product->stock }}
-                                @if ($product->stock == 0)
-                                <span class="text-red-600 text-xs block">Habis</span>
-                                @elseif ($product->stock < 10)
-                                    <span class="text-yellow-600 text-xs block">Menipis</span>
+                            <tr class="@if ($product->stock == 0) bg-red-50 @elseif ($product->stock < 10) bg-yellow-50 @endif">
+                                <td class="px-4 py-2 text-sm">{{ $product->code }}</td>
+                                <td class="px-4 py-2 text-sm">{{ $product->name }}</td>
+                                <td class="px-4 py-2 text-sm">{{ $product->category->name }}</td>
+                                <td class="px-4 py-2 text-sm text-right">
+                                    Rp{{ number_format($product->price, 0, ',', '.') }}
+                                </td>
+                                <td class="px-4 py-2 text-sm text-center font-semibold">
+                                    {{ $product->stock }}
+                                    @if ($product->stock == 0)
+                                        <span class="text-red-600 text-xs block">Habis</span>
+                                    @elseif ($product->stock < 10)
+                                        <span class="text-yellow-600 text-xs block">Menipis</span>
                                     @endif
-                            </td>
-                            <td class="px-4 py-2 text-sm text-center space-x-2">
-                                <a href="{{ route('products.edit', $product) }}" class="text-indigo-600">Ubah</a>
-                            </td>
-                        </tr>
+                                </td>
+                                <td class="px-4 py-2 text-sm text-center space-x-2 whitespace-nowrap">
+                                    <a href="{{ route('products.show', $product) }}" class="text-gray-600">Detail</a>
+                                    <a href="{{ route('products.edit', $product) }}" class="text-indigo-600">Ubah</a>
+
+                                    <form action="{{ route('products.destroy', $product) }}" method="POST"
+                                        data-name="{{ $product->name }}"
+                                        onsubmit="return confirm('Yakin ingin menghapus produk ' + this.dataset.name + '?')"
+                                        class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600">Hapus</button>
+                                    </form>
+                                </td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="6" class="px-4 py-6 text-center text-gray-500">
-                                Belum ada data produk.
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="6" class="px-4 py-6 text-center text-gray-500">
+                                    Belum ada data produk.
+                                </td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
 
-                 <form action="{{ route('products.destroy', $product) }}" method="POST"
-    onsubmit="return confirm('Yakin ingin menghapus produk {{ $product->name }}?')" class="inline">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="text-red-600">Hapus</button>
-</form>
+                <div class="mt-4 flex items-center justify-between">
+                    <p class="text-sm text-gray-500">
+                        @if ($products->total() > 0)
+                            Menampilkan {{ $products->firstItem() }}–{{ $products->lastItem() }}
+                            dari {{ $products->total() }} produk
+                        @else
+                            Tidak ada produk yang cocok.
+                        @endif
+                    </p>
 
-                <div class="mt-4">
                     {{ $products->links() }}
                 </div>
             </x-card>
         </div>
     </div>
 </x-app-layout>
-

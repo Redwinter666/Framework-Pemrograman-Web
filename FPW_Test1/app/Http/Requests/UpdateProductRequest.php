@@ -2,33 +2,40 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProductRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Hanya admin yang boleh mengubah data produk.
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check() && auth()->user()->role === 'admin';
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Aturan validasi untuk memperbarui produk.
+     * Unique code mengecualikan produk yang sedang diedit.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-   public function rules(): array
-{
-    return [
-        'category_id' => 'required|exists:categories,id',
-        'code' => 'required|string|max:20|unique:products,code,' . $this->product->id,
-        'name' => 'required|string|max:150',
-        'unit' => 'required|string|max:20',
-        'price' => 'required|integer|min:0',
-        'stock' => 'required|integer|min:0',
-    ];
-}
+    public function rules(): array
+    {
+        return [
+            'category_id' => 'required|exists:categories,id',
+            'code' => 'required|string|max:20|unique:products,code,' . $this->route('product')->id,
+            'name' => 'required|string|max:150',
+            'unit' => 'required|string|max:20',
+            'price' => 'required|integer|min:0',
+            'stock' => 'required|integer|min:0',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'code.unique' => 'Kode produk sudah digunakan, gunakan kode lain.',
+        ];
+    }
 }
