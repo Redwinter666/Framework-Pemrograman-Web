@@ -45,6 +45,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('users', UserController::class);
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('report.sales');
+    Route::get('/reports/sales/export', [ReportController::class, 'export'])->name('report.export');
 });
 
 Route::get('/index', function(){
